@@ -149,5 +149,5 @@ def challenge():
         css_class=css_class
     )
 
-# Vercel requires the app to be exported
-handler = app
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000, debug=False)
