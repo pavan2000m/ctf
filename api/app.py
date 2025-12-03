@@ -1,7 +1,8 @@
 from flask import Flask, request, render_template_string
 import hashlib
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=None)
+app.config['JSON_SORT_KEYS'] = False
 
 # MD5 hash of actual flag: flag{multi_shift_caesar_is_fun}
 FLAG_HASH = "9bf0e0d947df2f6edf004d32f5cefdba"
@@ -151,3 +152,6 @@ def challenge():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=False)
+
+# Export app for Vercel
+app = app
