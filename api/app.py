@@ -6,7 +6,7 @@ app = Flask(__name__)
 FLAG = "flag{multi_shift_caesar_is_fun}"
 
 # Final ciphertext after: Caesar → XOR("k3y") → Base64
-<!-- Hint: caesar_shifts_b64 = "LTMgLTUgLTcgLTkgLTExIC0xMw==" -->
+#<!-- Hint: caesar_shifts_b64 = "LTMgLTUgLTcgLTkgLTExIC0xMw==" -->
 
 CIPHERTEXT = "AlwdAUgLEUIABWwDBEMUCmwVAV0bAVImH1cmGFsYFg=="
 
