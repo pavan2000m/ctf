@@ -6,7 +6,7 @@ app = Flask(__name__)
 FLAG = "flag{multi_layer_caesar_xor_crypto}"
 
 # Final ciphertext after Caesar → XOR("k3y") → Base64
-CIPHERTEXT = "AlwdAUgLEUIABWwKA1UVEmwVAV0bAVImAkkaNEMcB1AeCU4="
+CIPHERTEXT = "AlwdAUgLEUIABWwDBEMUCmwVAV0bAVImH1cmGFsYFg=="
 
 # --------------------- PAGE 1 ---------------------
 PAGE_INTRO = r"""
