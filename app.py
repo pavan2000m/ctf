@@ -1,16 +1,14 @@
 from flask import Flask, request, render_template_string
-import hashlib
 
 app = Flask(__name__)
 
-# MD5 hash of actual flag: flag{multi_shift_caesar_is_fun}
-FLAG_HASH = "9bf0e0d947df2f6edf004d32f5cefdba"
+# Direct flag (no hashing)
+FLAG = "flag{multi_layer_caesar_xor_crypto}"
 
 # Final ciphertext after Caesar → XOR("k3y") → Base64
-# (This should match your current design; adjust if you change the flag or layers)
-CIPHERTEXT = "AlwdAUgLEUIABWwKA1UVEmwVAV0bAVImAkkaNEMcB1AeCU4="
+CIPHERTEXT = "AlwdAUgLEUIABWwDBEMUCmwVAV0bAVImH1cmGFsYFg=="
 
-# -------------------------- PAGE 1 --------------------------
+# --------------------- PAGE 1 ---------------------
 PAGE_INTRO = r"""
 <!doctype html>
 <html>
@@ -29,7 +27,7 @@ button { background:#ff9800; padding:10px 20px; border-radius:6px; border:none; 
     <p>You discovered a mysterious encrypted artifact.</p>
     <p>The scribbles mention <i>“layers upon layers upon layers…”</i></p>
 
-    
+    <code>QWw...</code>
 
     <p><i>"No single transformation stands alone."</i></p>
 
@@ -41,7 +39,7 @@ button { background:#ff9800; padding:10px 20px; border-radius:6px; border:none; 
 </html>
 """
 
-# -------------------------- PAGE 2 --------------------------
+# --------------------- PAGE 2 ---------------------
 PAGE_CLUES = r"""
 <!doctype html>
 <html>
@@ -57,7 +55,7 @@ button { background:#03a9f4; padding:10px 20px; border:none; border-radius:6px; 
 </head>
 <body>
 
-<!-- REAL HINT: Final order = Base64 decode → XOR with 'k3y' → reverse per-word Caesar shifts -->
+<!-- REAL HINT: Base64 → XOR with "k3y" → reverse the Caesar shifts -->
 <!-- XOR key = "k3y" -->
 
 <div class="card">
@@ -76,7 +74,7 @@ button { background:#03a9f4; padding:10px 20px; border:none; border-radius:6px; 
 </html>
 """
 
-# -------------------------- PAGE 3 --------------------------
+# --------------------- PAGE 3 ---------------------
 PAGE_CHALLENGE = r"""
 <!doctype html>
 <html>
@@ -98,6 +96,7 @@ input { width:90%; padding:10px; margin-top:15px; border-radius:6px; border:1px 
 <body>
 <div class="card">
     <h2>The Final Cipher</h2>
+    <!-- caesar_pattern_b64 = "LTMgLTUgLTcgLTkgLTExIC0xMw==" -->
     <!-- XOR key = "k3y" -->
 
     <code>{{ ciphertext }}</code>
@@ -117,7 +116,6 @@ input { width:90%; padding:10px; margin-top:15px; border-radius:6px; border:1px 
 </html>
 """
 
-# -------------------------- ROUTES --------------------------
 @app.route("/")
 def intro():
     return render_template_string(PAGE_INTRO)
@@ -133,9 +131,8 @@ def challenge():
 
     if request.method == "POST":
         guess = request.form.get("flag", "").strip()
-        guess_hash = hashlib.md5(guess.encode()).hexdigest()
 
-        if guess_hash == FLAG_HASH:
+        if guess == FLAG:
             message = "🎉 Correct! You have removed all three layers."
             css_class = "ok"
         else:

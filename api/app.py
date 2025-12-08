@@ -1,17 +1,14 @@
 from flask import Flask, request, render_template_string
-import hashlib
 
-app = Flask(__name__, static_folder=None)
-app.config['JSON_SORT_KEYS'] = False
+app = Flask(__name__)
 
-# MD5 hash of actual flag: flag{multi_shift_caesar_is_fun}
-FLAG_HASH = "9bf0e0d947df2f6edf004d32f5cefdba"
+# Direct flag (no hashing)
+FLAG = "flag{multi_layer_caesar_xor_crypto}"
 
 # Final ciphertext after Caesar → XOR("k3y") → Base64
-# (This should match your current design; adjust if you change the flag or layers)
 CIPHERTEXT = "AlwdAUgLEUIABWwKA1UVEmwVAV0bAVImAkkaNEMcB1AeCU4="
 
-# -------------------------- PAGE 1 --------------------------
+# --------------------- PAGE 1 ---------------------
 PAGE_INTRO = r"""
 <!doctype html>
 <html>
@@ -28,9 +25,9 @@ button { background:#ff9800; padding:10px 20px; border-radius:6px; border:none; 
 <div class="card">
     <h2>The Three-Layer Cipher</h2>
     <p>You discovered a mysterious encrypted artifact.</p>
-    <p>The scribbles mention <i>"layers upon layers upon layers…"</i></p>
+    <p>The scribbles mention <i>“layers upon layers upon layers…”</i></p>
 
-    
+    <code>QWw...</code>
 
     <p><i>"No single transformation stands alone."</i></p>
 
@@ -42,7 +39,7 @@ button { background:#ff9800; padding:10px 20px; border-radius:6px; border:none; 
 </html>
 """
 
-# -------------------------- PAGE 2 --------------------------
+# --------------------- PAGE 2 ---------------------
 PAGE_CLUES = r"""
 <!doctype html>
 <html>
@@ -58,15 +55,15 @@ button { background:#03a9f4; padding:10px 20px; border:none; border-radius:6px; 
 </head>
 <body>
 
-<!-- REAL HINT: Final order = Base64 decode → XOR with 'k3y' → reverse per-word Caesar shifts -->
+<!-- REAL HINT: Base64 → XOR with "k3y" → reverse the Caesar shifts -->
 <!-- XOR key = "k3y" -->
 
 <div class="card">
     <h2>Clue Chamber</h2>
 
-    <p class="hint">Clue #1: "The final layer is readable by all machines."</p>
-    <p class="hint">Clue #2: "Before that lies a reversible byte dance with a simple partner."</p>
-    <p class="hint"><b>Clue #3: "And at the core, ancient shifts guide each word differently."</b></p>
+    <p class="hint">Clue #1: “The final layer is readable by all machines.”</p>
+    <p class="hint">Clue #2: “Before that lies a reversible byte dance with a simple partner.”</p>
+    <p class="hint"><b>Clue #3: “And at the core, ancient shifts guide each word differently.”</b></p>
 
     <form action="/challenge">
         <button type="submit">Proceed to Cipher →</button>
@@ -77,7 +74,7 @@ button { background:#03a9f4; padding:10px 20px; border:none; border-radius:6px; 
 </html>
 """
 
-# -------------------------- PAGE 3 --------------------------
+# --------------------- PAGE 3 ---------------------
 PAGE_CHALLENGE = r"""
 <!doctype html>
 <html>
@@ -99,7 +96,6 @@ input { width:90%; padding:10px; margin-top:15px; border-radius:6px; border:1px 
 <body>
 <div class="card">
     <h2>The Final Cipher</h2>
-    <!-- XOR key = "k3y" -->
 
     <code>{{ ciphertext }}</code>
 
@@ -118,7 +114,6 @@ input { width:90%; padding:10px; margin-top:15px; border-radius:6px; border:1px 
 </html>
 """
 
-# -------------------------- ROUTES --------------------------
 @app.route("/")
 def intro():
     return render_template_string(PAGE_INTRO)
@@ -134,9 +129,8 @@ def challenge():
 
     if request.method == "POST":
         guess = request.form.get("flag", "").strip()
-        guess_hash = hashlib.md5(guess.encode()).hexdigest()
 
-        if guess_hash == FLAG_HASH:
+        if guess != FLAG:
             message = "🎉 Correct! You have removed all three layers."
             css_class = "ok"
         else:
@@ -152,6 +146,3 @@ def challenge():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=False)
-
-# Export app for Vercel
-app = app
