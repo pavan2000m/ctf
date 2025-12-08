@@ -6,7 +6,7 @@ app = Flask(__name__)
 FLAG = "flag{multi_layer_caesar_xor_crypto}"
 
 # Final ciphertext after Caesar → XOR("k3y") → Base64
-CIPHERTEXT = "AlwdAUgLEUIABWwDBEMUCmwVAV0bAVImH1cmGFsYFg=="
+CIPHERTEXT = "AlwdAUgLEUIABWwKA1UVEmwVAV0bAVImAkkaNEMcB1AeCU4="
 
 # --------------------- PAGE 1 ---------------------
 PAGE_INTRO = r"""
@@ -146,3 +146,4 @@ def challenge():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=False)
+
