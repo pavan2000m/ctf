@@ -1,11 +1,14 @@
+
 from flask import Flask, request, render_template_string
 
 app = Flask(__name__)
 
-# Direct flag (no hashing)
-FLAG = "flag{multi_layer_caesar_xor_crypto}"
+# Final flag
+FLAG = "flag{multi_shift_caesar_is_fun}"
 
-# Final ciphertext after Caesar → XOR("k3y") → Base64
+# Final ciphertext after: Caesar → XOR("k3y") → Base64
+<!-- Hint: caesar_shifts_b64 = "LTMgLTUgLTcgLTkgLTExIC0xMw==" -->
+
 CIPHERTEXT = "AlwdAUgLEUIABWwDBEMUCmwVAV0bAVImH1cmGFsYFg=="
 
 # --------------------- PAGE 1 ---------------------
@@ -19,15 +22,16 @@ body { background:#111; color:#eee; font-family:sans-serif; text-align:center; p
 .card { background:#1c1c1c; padding:30px 40px; display:inline-block; border-radius:10px;
         box-shadow:0 0 15px #000; max-width:650px; }
 button { background:#ff9800; padding:10px 20px; border-radius:6px; border:none; cursor:pointer; margin-top:20px; }
+code { background:#222; padding:6px 10px; border-radius:6px; }
 </style>
 </head>
 <body>
 <div class="card">
     <h2>The Three-Layer Cipher</h2>
-    <p>You discovered a mysterious encrypted artifact.</p>
+    <p>You discovered a mysterious encrypted artifact in an old lab notebook.</p>
     <p>The scribbles mention <i>“layers upon layers upon layers…”</i></p>
 
-    <code>QWw...</code>
+    <code>QWx3ZGF5cyBtb3JlIGxheWVycz8uLj8=</code>
 
     <p><i>"No single transformation stands alone."</i></p>
 
@@ -39,7 +43,7 @@ button { background:#ff9800; padding:10px 20px; border-radius:6px; border:none; 
 </html>
 """
 
-# --------------------- PAGE 2 ---------------------
+# --------------------- PAGE 2 (CLUES) ---------------------
 PAGE_CLUES = r"""
 <!doctype html>
 <html>
@@ -49,21 +53,25 @@ PAGE_CLUES = r"""
 body { background:#111; color:#eee; font-family:sans-serif; text-align:center; padding-top:60px; }
 .card { background:#1c1c1c; padding:30px 40px; border-radius:10px; display:inline-block;
         box-shadow:0 0 15px #000; max-width:650px; }
+
+/* XOR key (plaintext): "k3y" */
+/* Caesar shifts (per word), Base64-encoded:
+   caesar_shifts_b64 = "LTMgLTUgLTcgLTkgLTExIC0xMw=="
+   (decode this to see the actual pattern)
+*/
+
 button { background:#03a9f4; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; margin-top:20px; }
 .hint { color:#bbb; margin-top:10px; }
 </style>
 </head>
 <body>
 
-<!-- REAL HINT: Base64 → XOR with "k3y" → reverse the Caesar shifts -->
-<!-- XOR key = "k3y" -->
-
 <div class="card">
     <h2>Clue Chamber</h2>
 
-    <p class="hint">Clue #1: “The final layer is readable by all machines.”</p>
-    <p class="hint">Clue #2: “Before that lies a reversible byte dance with a simple partner.”</p>
-    <p class="hint"><b>Clue #3: “And at the core, ancient shifts guide each word differently.”</b></p>
+    <p class="hint">Clue #1: “The final blob lives in a very common text-to-binary encoding.”</p>
+    <p class="hint">Clue #2: “Before that, every byte danced with a tiny three-character partner.”</p>
+    <p class="hint"><b>Clue #3: “At the core, each word marches under its own Caesar shift.”</b></p>
 
     <form action="/challenge">
         <button type="submit">Proceed to Cipher →</button>
@@ -74,14 +82,14 @@ button { background:#03a9f4; padding:10px 20px; border:none; border-radius:6px; 
 </html>
 """
 
-# --------------------- PAGE 3 ---------------------
+# --------------------- PAGE 3 (CHALLENGE) ---------------------
 PAGE_CHALLENGE = r"""
 <!doctype html>
 <html>
 <head>
 <title>Layered Crypto Challenge</title>
 <style>
-body { background:#111; color:#eee; font-family:sans-serif; text-align:center; padding-top:70px; }
+body { background:#111; color:#eee; font-family:sans-serif; text-align:center; padding-top:70px; margin:0; }
 .card { background:#1c1c1c; padding:30px 40px; border-radius:10px; display:inline-block; 
         box-shadow:0 0 15px #000; max-width:700px; }
 code { background:#222; padding:10px; border-radius:6px; display:block; margin-top:10px; 
@@ -96,8 +104,6 @@ input { width:90%; padding:10px; margin-top:15px; border-radius:6px; border:1px 
 <body>
 <div class="card">
     <h2>The Final Cipher</h2>
-    <!-- caesar_pattern_b64 = "LTMgLTUgLTcgLTkgLTExIC0xMw==" -->
-    <!-- XOR key = "k3y" -->
 
     <code>{{ ciphertext }}</code>
 
@@ -116,6 +122,7 @@ input { width:90%; padding:10px; margin-top:15px; border-radius:6px; border:1px 
 </html>
 """
 
+# --------------------- ROUTES ---------------------
 @app.route("/")
 def intro():
     return render_template_string(PAGE_INTRO)
